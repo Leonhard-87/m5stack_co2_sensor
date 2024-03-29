@@ -1562,6 +1562,20 @@ void updateTime(struct state *state)
     {
         Serial.println("Failed to obtain time");
     }
+    if (state->current_time.tm_hour >= 0 && state->current_time.tm_hour <= 7) {
+        
+     M5.Lcd.setBrightness(0);
+        M5.Lcd.sleep();
+        // Disable DC-DC3, display backlight
+        WriteByte(0x12, (ReadByte(0x12) & (~2)));
+    }
+    if (state->current_time.tm_hour >= 8 && state->current_time.tm_hour <= 23) {
+        setDisplayPower(true);
+        M5.Lcd.setBrightness(255);
+        M5.Lcd.wakeup();
+        // Enable DC-DC3, enable backlight
+        WriteByte(0x12, (ReadByte(0x12) | 2));
+    } 
 }
 
 void updateBattery(struct state *state)
